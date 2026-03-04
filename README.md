@@ -18,7 +18,7 @@ Add to your Claude Code MCP configuration (`~/.claude/settings.json` or project 
     "aidflow": {
       "command": "aidflow",
       "env": {
-        "DEVPILOT_ROOT": "/path/to/your/project"
+        "AIDFLOW_ROOT": "/path/to/your/project"
       }
     }
   }
@@ -34,14 +34,14 @@ Or run with npx (no install):
       "command": "npx",
       "args": ["-y", "aidflow"],
       "env": {
-        "DEVPILOT_ROOT": "/path/to/your/project"
+        "AIDFLOW_ROOT": "/path/to/your/project"
       }
     }
   }
 }
 ```
 
-> `DEVPILOT_ROOT` defaults to `process.cwd()` if not set.
+> `AIDFLOW_ROOT` defaults to `process.cwd()` if not set.
 
 ## What It Does
 
@@ -53,7 +53,7 @@ aidflow structures your Claude Code workflow into **sessions** - isolated units 
 init -> /spec -> session create -> plan create -> work -> /review -> session complete -> /report
 ```
 
-1. **`init`** - Set up `.devpilot/` directory and configuration
+1. **`init`** - Set up `.aidflow/` directory and configuration
 2. **`/spec`** - Define project engineering foundations (SPEC.md)
 3. **`session create`** - Start a new work session
 4. **`plan create`** - Structured planning with multi-round requirements gathering
@@ -96,7 +96,7 @@ After `init`, your project gets:
 ```
 your-project/
   SPEC.md                    # Project engineering foundations (via /spec)
-  .devpilot/
+  .aidflow/
     config.yaml              # Configuration
     README.md                # Internal documentation
     sessions/                # Active sessions
@@ -119,22 +119,22 @@ your-project/
 
 ## Configuration
 
-`.devpilot/config.yaml`:
+`.aidflow/config.yaml`:
 
 ```yaml
 version: 1
 
 worktree:
   auto: false                # Auto-create worktree per session
-  path: ".devpilot/worktrees"
+  path: ".aidflow/worktrees"
   branch_prefix: ""          # e.g., "feature/", "fix/"
 
 session:
-  history_path: ".devpilot/history"
+  history_path: ".aidflow/history"
   date_format: "YYMMDD"     # or "YYYYMMDD"
 
 guides:
-  path: ".devpilot/guides"
+  path: ".aidflow/guides"
 ```
 
 ## Requirements

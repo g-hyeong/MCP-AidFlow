@@ -3,20 +3,20 @@ import { parse, stringify } from "../src/context/yaml.js";
 
 describe("YAML parser", () => {
   it("parses simple key-value pairs", () => {
-    const result = parse("name: devpilot\nversion: 1");
-    expect(result).toEqual({ name: "devpilot", version: 1 });
+    const result = parse("name: aidflow\nversion: 1");
+    expect(result).toEqual({ name: "aidflow", version: 1 });
   });
 
   it("parses nested objects", () => {
     const yaml = `worktree:
   auto: false
-  path: ".devpilot/worktrees"
+  path: ".aidflow/worktrees"
   branch_prefix: ""`;
     const result = parse(yaml);
     expect(result).toEqual({
       worktree: {
         auto: false,
-        path: ".devpilot/worktrees",
+        path: ".aidflow/worktrees",
         branch_prefix: "",
       },
     });
@@ -66,13 +66,13 @@ describe("YAML parser", () => {
     const yaml = `worktree:
   auto: false
 session:
-  history_path: ".devpilot/history"
+  history_path: ".aidflow/history"
   date_format: "YYMMDD"`;
     const result = parse(yaml);
     expect(result).toEqual({
       worktree: { auto: false },
       session: {
-        history_path: ".devpilot/history",
+        history_path: ".aidflow/history",
         date_format: "YYMMDD",
       },
     });
@@ -86,24 +86,24 @@ session:
 
 describe("YAML stringify", () => {
   it("stringifies simple key-value pairs", () => {
-    const result = stringify({ name: "devpilot", version: 1 });
-    expect(result).toContain('name: "devpilot"');
+    const result = stringify({ name: "aidflow", version: 1 });
+    expect(result).toContain('name: "aidflow"');
     expect(result).toContain("version: 1");
   });
 
   it("stringifies nested objects with indentation", () => {
     const result = stringify({
-      worktree: { auto: false, path: ".devpilot/worktrees" },
+      worktree: { auto: false, path: ".aidflow/worktrees" },
     });
     expect(result).toContain("worktree:");
-    expect(result).toContain('  path: ".devpilot/worktrees"');
+    expect(result).toContain('  path: ".aidflow/worktrees"');
     expect(result).toContain("  auto: false");
   });
 
   it("roundtrips simple config", () => {
     const original = {
       version: 1,
-      worktree: { auto: false, path: ".devpilot/worktrees" },
+      worktree: { auto: false, path: ".aidflow/worktrees" },
     };
     const yaml = stringify(original);
     const parsed = parse(yaml);

@@ -1,5 +1,5 @@
 # Getting Started
-Quick guide to using devpilot in this project.
+Quick guide to using aidflow in this project.
 
 ## Session Workflow
 
@@ -17,5 +17,5 @@ For isolated parallel work, create sessions with worktrees:
 
 ## Guides
 
-Add project-specific guides to `.devpilot/guides/` as markdown files.
+Add project-specific guides to `.aidflow/guides/` as markdown files.
 Use `guide list` to see available guides.

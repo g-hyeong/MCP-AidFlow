@@ -40,9 +40,9 @@ export async function handleInit(input: InitInput): Promise<string> {
 
   if (isInitialized() && !input.force) {
     return [
-      "devpilot is already initialized in this project.",
+      "aidflow is already initialized in this project.",
       "",
-      "Directory: .devpilot/",
+      "Directory: .aidflow/",
       "Use `force: true` to overwrite existing configuration.",
     ].join("\n");
   }
@@ -50,12 +50,12 @@ export async function handleInit(input: InitInput): Promise<string> {
   const created: string[] = [];
   const tplDir = templatesDir();
 
-  // 1. Create .devpilot/ structure
+  // 1. Create .aidflow/ structure
   const dirs = [
-    ".devpilot",
-    ".devpilot/sessions",
-    ".devpilot/history",
-    ".devpilot/guides",
+    ".aidflow",
+    ".aidflow/sessions",
+    ".aidflow/history",
+    ".aidflow/guides",
   ];
   for (const dir of dirs) {
     const full = resolve(dir);
@@ -66,25 +66,25 @@ export async function handleInit(input: InitInput): Promise<string> {
   }
 
   // 2. Copy config.yaml
-  const configDest = resolve(".devpilot", "config.yaml");
+  const configDest = resolve(".aidflow", "config.yaml");
   const configSrc = join(tplDir, "config.yaml");
   if ((!existsSync(configDest) || input.force) && existsSync(configSrc)) {
     copyFileSync(configSrc, configDest);
-    created.push(".devpilot/config.yaml");
+    created.push(".aidflow/config.yaml");
   }
 
   // 3. Copy README.md
-  const readmeDest = resolve(".devpilot", "README.md");
+  const readmeDest = resolve(".aidflow", "README.md");
   const readmeSrc = join(tplDir, "README.md");
   if ((!existsSync(readmeDest) || input.force) && existsSync(readmeSrc)) {
     copyFileSync(readmeSrc, readmeDest);
-    created.push(".devpilot/README.md");
+    created.push(".aidflow/README.md");
   }
 
   // 4. Copy guide templates
   const guidesSrc = join(tplDir, "guides");
   if (existsSync(guidesSrc)) {
-    const guideFiles = copyTemplateDir(guidesSrc, resolve(".devpilot", "guides"));
+    const guideFiles = copyTemplateDir(guidesSrc, resolve(".aidflow", "guides"));
     created.push(...guideFiles.map((f) => f.replace(root + "/", "")));
   }
 
@@ -97,9 +97,9 @@ export async function handleInit(input: InitInput): Promise<string> {
     created.push(...skillFiles.map((f) => f.replace(root + "/", "")));
   }
 
-  // 6. Add .devpilot/worktrees to .gitignore if needed
+  // 6. Add .aidflow/worktrees to .gitignore if needed
   const gitignorePath = resolve(".gitignore");
-  const worktreeEntry = ".devpilot/worktrees/";
+  const worktreeEntry = ".aidflow/worktrees/";
   if (existsSync(gitignorePath)) {
     const content = await import("node:fs").then((fs) =>
       fs.readFileSync(gitignorePath, "utf-8"),
@@ -107,27 +107,27 @@ export async function handleInit(input: InitInput): Promise<string> {
     if (!content.includes(worktreeEntry)) {
       writeFileSync(
         gitignorePath,
-        content.trimEnd() + "\n\n# devpilot worktrees\n" + worktreeEntry + "\n",
+        content.trimEnd() + "\n\n# aidflow worktrees\n" + worktreeEntry + "\n",
       );
       created.push(".gitignore (updated)");
     }
   } else {
-    writeFileSync(gitignorePath, "# devpilot worktrees\n" + worktreeEntry + "\n");
+    writeFileSync(gitignorePath, "# aidflow worktrees\n" + worktreeEntry + "\n");
     created.push(".gitignore (created)");
   }
 
   return [
-    "devpilot initialized successfully.",
+    "aidflow initialized successfully.",
     "",
     "Created files:",
     ...created.map((f) => `  - ${f}`),
     "",
     "Next steps:",
     "1. Run `/spec` to define project-level engineering foundations (SPEC.md). This is essential for consistent development.",
-    "2. Add project-specific guides to .devpilot/guides/",
-    "3. Review .devpilot/config.yaml for worktree settings",
+    "2. Add project-specific guides to .aidflow/guides/",
+    "3. Review .aidflow/config.yaml for worktree settings",
     "4. Start working with `session create`",
     "",
-    "Read .devpilot/README.md for detailed documentation.",
+    "Read .aidflow/README.md for detailed documentation.",
   ].join("\n");
 }

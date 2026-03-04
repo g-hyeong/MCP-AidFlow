@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml } from "./yaml.js";
 
-export interface DevpilotConfig {
+export interface AidflowConfig {
   version: number;
   worktree: {
     auto: boolean;
@@ -18,24 +18,24 @@ export interface DevpilotConfig {
   };
 }
 
-const DEFAULT_CONFIG: DevpilotConfig = {
+const DEFAULT_CONFIG: AidflowConfig = {
   version: 1,
   worktree: {
     auto: false,
-    path: ".devpilot/worktrees",
+    path: ".aidflow/worktrees",
     branch_prefix: "",
   },
   session: {
-    history_path: ".devpilot/history",
+    history_path: ".aidflow/history",
     date_format: "YYMMDD",
   },
   guides: {
-    path: ".devpilot/guides",
+    path: ".aidflow/guides",
   },
 };
 
 let workspaceRoot: string | null = null;
-let cachedConfig: DevpilotConfig | null = null;
+let cachedConfig: AidflowConfig | null = null;
 
 export function setWorkspaceRoot(root: string): void {
   workspaceRoot = root;
@@ -52,17 +52,17 @@ export function getWorkspaceRoot(): string {
 export function isInitialized(): boolean {
   try {
     const root = getWorkspaceRoot();
-    return existsSync(join(root, ".devpilot"));
+    return existsSync(join(root, ".aidflow"));
   } catch {
     return false;
   }
 }
 
-export function getConfig(): DevpilotConfig {
+export function getConfig(): AidflowConfig {
   if (cachedConfig) return cachedConfig;
 
   const root = getWorkspaceRoot();
-  const configPath = join(root, ".devpilot", "config.yaml");
+  const configPath = join(root, ".aidflow", "config.yaml");
 
   if (!existsSync(configPath)) {
     cachedConfig = DEFAULT_CONFIG;
@@ -75,7 +75,7 @@ export function getConfig(): DevpilotConfig {
     cachedConfig = deepMerge(
       structuredClone(DEFAULT_CONFIG) as unknown as Record<string, unknown>,
       parsed,
-    ) as unknown as DevpilotConfig;
+    ) as unknown as AidflowConfig;
     return cachedConfig;
   } catch {
     cachedConfig = DEFAULT_CONFIG;

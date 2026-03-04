@@ -12,7 +12,7 @@ import type { PlanInput } from "./schema.js";
 
 export async function handlePlan(input: PlanInput): Promise<string> {
   if (!isInitialized()) {
-    return "devpilot is not initialized. Run `init` first.";
+    return "aidflow is not initialized. Run `init` first.";
   }
 
   const sessionName = resolveSession(input.session);
@@ -37,7 +37,7 @@ function resolveSession(name?: string): string | null {
 }
 
 function handleCreate(sessionName: string): string {
-  const planPath = resolve(".devpilot", "sessions", sessionName, "plan.md");
+  const planPath = resolve(".aidflow", "sessions", sessionName, "plan.md");
 
   if (existsSync(planPath)) {
     return [
@@ -113,7 +113,7 @@ function handleCreate(sessionName: string): string {
     "",
     "## Step 3: Write Plan",
     "",
-    `Write to: .devpilot/sessions/${sessionName}/plan.md`,
+    `Write to: .aidflow/sessions/${sessionName}/plan.md`,
     "",
     "Plan format (PRD + Implementation Plan):",
     "```markdown",

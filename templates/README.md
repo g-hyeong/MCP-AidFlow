@@ -1,11 +1,11 @@
-# devpilot
+# aidflow
 
 Session-based development workflow manager for Claude Code.
 
 ## Directory Structure
 
 ```
-.devpilot/
+.aidflow/
   config.yaml     # Configuration
   sessions/       # Active sessions
     {name}/
@@ -28,17 +28,17 @@ Session-based development workflow manager for Claude Code.
 |-----|------|---------|-------------|
 | `version` | number | `1` | Config version |
 | `worktree.auto` | boolean | `false` | Auto-create worktree on session create |
-| `worktree.path` | string | `".devpilot/worktrees"` | Worktree storage path |
+| `worktree.path` | string | `".aidflow/worktrees"` | Worktree storage path |
 | `worktree.branch_prefix` | string | `""` | Branch name prefix (e.g., `"feature/"`, `"fix/"`) |
-| `session.history_path` | string | `".devpilot/history"` | Archive destination |
+| `session.history_path` | string | `".aidflow/history"` | Archive destination |
 | `session.date_format` | string | `"YYMMDD"` | Date format for archive names (`YYMMDD` or `YYYYMMDD`) |
-| `guides.path` | string | `".devpilot/guides"` | Guide documents path |
+| `guides.path` | string | `".aidflow/guides"` | Guide documents path |
 
 ---
 
 ## meta.json
 
-Session metadata. Automatically managed by devpilot.
+Session metadata. Automatically managed by aidflow.
 
 ```json
 {
@@ -47,7 +47,7 @@ Session metadata. Automatically managed by devpilot.
   "status": "active",
   "worktree": {
     "enabled": true,
-    "path": ".devpilot/worktrees/fix-auth-bug",
+    "path": ".aidflow/worktrees/fix-auth-bug",
     "branch": "fix-auth-bug"
   }
 }
@@ -113,7 +113,7 @@ Progress is tracked via checkboxes. `session status` reports completion rate.
 
 ## Guides
 
-Markdown files in `.devpilot/guides/`. Used for project-specific knowledge injection.
+Markdown files in `.aidflow/guides/`. Used for project-specific knowledge injection.
 
 - First line = title, second line = description
 - Use `guide list` to see available guides

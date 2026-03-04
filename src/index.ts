@@ -8,7 +8,7 @@ import { SessionInputSchema, handleSession, description as sessionDesc } from ".
 import { PlanInputSchema, handlePlan, description as planDesc } from "./tools/plan/index.js";
 import { GuideInputSchema, handleGuide, description as guideDesc } from "./tools/guide/index.js";
 
-const INSTRUCTIONS = `# devpilot
+const INSTRUCTIONS = `# aidflow
 
 Session-based development workflow manager.
 
@@ -22,26 +22,25 @@ Before doing ANYTHING, check for existing context:
    - Inform the user: "Found active session '{name}'. Resuming where you left off."
    - Continue work from where it was left off.
 3. If no active session:
-   - Check if devpilot is initialized (.devpilot/ exists). If not, run \`init\` first.
+   - Check if aidflow is initialized (.aidflow/ exists). If not, run \`init\` first.
    - Proceed with normal workflow below.
 
 This ensures seamless context recovery across conversation sessions.
 
 ## First-time Setup
-1. \`init\` to create .devpilot/ directory and configuration.
+1. \`init\` to create .aidflow/ directory and configuration.
 2. \`/spec\` to define project-level engineering foundations (SPEC.md).
 
 ## Development Cycle
 1. \`session create\` to start work. Read SPEC.md for project conventions.
 2. \`plan create\` for medium/large tasks. Plan references SPEC.md, only adds task-specific decisions.
 3. Work using Claude Code's native tools. Follow plan.md as the execution spec.
-4. \`/review\` before completing - quality gate to catch issues while they're still fixable.
-5. \`session complete\` to archive. If new patterns/conventions were introduced, update SPEC.md with \`/spec\`.
-6. \`/report\` to generate a completion report for the archived session.
+4. When work is done, run \`/finish\` to complete the session (review, archive, report, commit in one step).
 
 ## Rules
-- **All development work MUST go through devpilot**. Always use \`session create\` before coding.
+- **All development work MUST go through aidflow**. Always use \`session create\` before coding.
 - Always confirm with the user before proceeding (use AskUserQuestion).
+- **When a plan item is completed, immediately update plan.md**: change \`- [ ]\` to \`- [x]\` for the corresponding item. This keeps plan progress accurate.
 - Use \`guide list\` to find relevant guides, then let the user choose.
 - For parallel work, create multiple sessions with worktrees and use Subagents.
 
@@ -51,12 +50,12 @@ This ensures seamless context recovery across conversation sessions.
 - Never assume the user knows framework-specific conventions. Explain and offer choices.
 
 ## External Tool Collaboration
-- devpilot manages the development workflow (session, plan, spec). Actual coding uses the AI client's native tools.
+- aidflow manages the development workflow (session, plan, spec). Actual coding uses the AI client's native tools.
 - Other MCP servers, skills, and plugins are encouraged for information gathering, code analysis, and specialized tasks.
-- Use the best tool for each job: devpilot for structure, native tools for implementation, external tools for everything else.`;
+- Use the best tool for each job: aidflow for structure, native tools for implementation, external tools for everything else.`;
 
 const server = new McpServer(
-  { name: "devpilot", version: "1.0.0" },
+  { name: "aidflow", version: "1.0.0" },
   {
     capabilities: {
       tools: {},
@@ -106,13 +105,13 @@ async function main() {
   const transport = new StdioServerTransport();
 
   // Workspace root from environment or cwd
-  const root = process.env.DEVPILOT_ROOT ?? process.cwd();
+  const root = process.env.AIDFLOW_ROOT ?? process.cwd();
   setWorkspaceRoot(root);
 
   await server.connect(transport);
 }
 
 main().catch((err) => {
-  console.error("Failed to start devpilot MCP server:", err);
+  console.error("Failed to start aidflow MCP server:", err);
   process.exit(1);
 });

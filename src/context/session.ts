@@ -28,7 +28,7 @@ export interface PlanProgress {
 }
 
 function sessionsDir(): string {
-  return resolve(".devpilot", "sessions");
+  return resolve(".aidflow", "sessions");
 }
 
 function sessionDir(name: string): string {

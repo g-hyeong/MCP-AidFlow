@@ -10,7 +10,7 @@ Generate a completion report for the most recently archived session.
 
 ## Steps
 
-1. Find the latest directory in `.devpilot/history/` (sorted by name, newest first)
+1. Find the latest directory in `.aidflow/history/` (sorted by name, newest first)
 2. Read `meta.json` from that directory to get session metadata
 3. Read `plan.md` from that directory (if exists)
 4. Gather git commits for the session period:

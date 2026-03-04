@@ -18,16 +18,16 @@ import {
 let testRoot: string;
 
 beforeEach(() => {
-  testRoot = join(tmpdir(), `devpilot-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-  mkdirSync(join(testRoot, ".devpilot", "sessions"), { recursive: true });
-  mkdirSync(join(testRoot, ".devpilot", "history"), { recursive: true });
+  testRoot = join(tmpdir(), `aidflow-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  mkdirSync(join(testRoot, ".aidflow", "sessions"), { recursive: true });
+  mkdirSync(join(testRoot, ".aidflow", "history"), { recursive: true });
 
   // config.yaml 생성 (기본값 사용을 위해)
   writeFileSync(
-    join(testRoot, ".devpilot", "config.yaml"),
+    join(testRoot, ".aidflow", "config.yaml"),
     `version: 1
 session:
-  history_path: ".devpilot/history"
+  history_path: ".aidflow/history"
   date_format: "YYMMDD"`,
   );
 
@@ -66,7 +66,7 @@ describe("createSession", () => {
 
   it("writes meta.json to disk", () => {
     createSession("disk-check");
-    const metaPath = join(testRoot, ".devpilot", "sessions", "disk-check", "meta.json");
+    const metaPath = join(testRoot, ".aidflow", "sessions", "disk-check", "meta.json");
     expect(existsSync(metaPath)).toBe(true);
     const content = JSON.parse(readFileSync(metaPath, "utf-8"));
     expect(content.name).toBe("disk-check");
@@ -157,7 +157,7 @@ describe("archiveSession", () => {
     expect(archivePath).toContain("archive-me");
     expect(existsSync(archivePath)).toBe(true);
     // Original session dir should be gone
-    expect(existsSync(join(testRoot, ".devpilot", "sessions", "archive-me"))).toBe(false);
+    expect(existsSync(join(testRoot, ".aidflow", "sessions", "archive-me"))).toBe(false);
   });
 
   it("sets completed status and timestamp", () => {
@@ -195,7 +195,7 @@ describe("getPlanProgress", () => {
 
   it("parses checkboxes from plan.md", () => {
     createSession("with-plan");
-    const planPath = join(testRoot, ".devpilot", "sessions", "with-plan", "plan.md");
+    const planPath = join(testRoot, ".aidflow", "sessions", "with-plan", "plan.md");
     writeFileSync(
       planPath,
       `# Test Plan
@@ -216,7 +216,7 @@ describe("getPlanProgress", () => {
 
   it("handles non-sequential checkbox completion", () => {
     createSession("non-seq");
-    const planPath = join(testRoot, ".devpilot", "sessions", "non-seq", "plan.md");
+    const planPath = join(testRoot, ".aidflow", "sessions", "non-seq", "plan.md");
     writeFileSync(
       planPath,
       `- [ ] First: not done
@@ -242,7 +242,7 @@ describe("getPlanProgress", () => {
 
   it("returns empty items when plan has no checkboxes", () => {
     createSession("no-checkboxes");
-    const planPath = join(testRoot, ".devpilot", "sessions", "no-checkboxes", "plan.md");
+    const planPath = join(testRoot, ".aidflow", "sessions", "no-checkboxes", "plan.md");
     writeFileSync(planPath, "# Plan\nJust some text, no checkboxes.");
     const progress = getPlanProgress("no-checkboxes");
     expect(progress.exists).toBe(true);
@@ -259,7 +259,7 @@ describe("getPlanContent", () => {
 
   it("returns plan content", () => {
     createSession("has-content");
-    const planPath = join(testRoot, ".devpilot", "sessions", "has-content", "plan.md");
+    const planPath = join(testRoot, ".aidflow", "sessions", "has-content", "plan.md");
     writeFileSync(planPath, "# My Plan\n\nSome content.");
     expect(getPlanContent("has-content")).toBe("# My Plan\n\nSome content.");
   });

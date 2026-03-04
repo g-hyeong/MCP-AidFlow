@@ -13,7 +13,7 @@ import {
 let testRoot: string;
 
 beforeEach(() => {
-  testRoot = join(tmpdir(), `devpilot-ws-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  testRoot = join(tmpdir(), `aidflow-ws-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   mkdirSync(testRoot, { recursive: true });
 });
 
@@ -29,13 +29,13 @@ describe("setWorkspaceRoot / getWorkspaceRoot", () => {
 });
 
 describe("isInitialized", () => {
-  it("returns false when .devpilot does not exist", () => {
+  it("returns false when .aidflow does not exist", () => {
     setWorkspaceRoot(testRoot);
     expect(isInitialized()).toBe(false);
   });
 
-  it("returns true when .devpilot exists", () => {
-    mkdirSync(join(testRoot, ".devpilot"));
+  it("returns true when .aidflow exists", () => {
+    mkdirSync(join(testRoot, ".aidflow"));
     setWorkspaceRoot(testRoot);
     expect(isInitialized()).toBe(true);
   });
@@ -43,22 +43,22 @@ describe("isInitialized", () => {
 
 describe("getConfig", () => {
   it("returns default config when no config.yaml", () => {
-    mkdirSync(join(testRoot, ".devpilot"));
+    mkdirSync(join(testRoot, ".aidflow"));
     setWorkspaceRoot(testRoot);
     const config = getConfig();
     expect(config.version).toBe(1);
     expect(config.worktree.auto).toBe(false);
-    expect(config.worktree.path).toBe(".devpilot/worktrees");
+    expect(config.worktree.path).toBe(".aidflow/worktrees");
     expect(config.worktree.branch_prefix).toBe("");
-    expect(config.session.history_path).toBe(".devpilot/history");
+    expect(config.session.history_path).toBe(".aidflow/history");
     expect(config.session.date_format).toBe("YYMMDD");
-    expect(config.guides.path).toBe(".devpilot/guides");
+    expect(config.guides.path).toBe(".aidflow/guides");
   });
 
   it("merges partial config with defaults", () => {
-    mkdirSync(join(testRoot, ".devpilot"));
+    mkdirSync(join(testRoot, ".aidflow"));
     writeFileSync(
-      join(testRoot, ".devpilot", "config.yaml"),
+      join(testRoot, ".aidflow", "config.yaml"),
       `worktree:
   auto: true
   branch_prefix: "feature/"`,
@@ -69,14 +69,14 @@ describe("getConfig", () => {
     expect(config.worktree.auto).toBe(true);
     expect(config.worktree.branch_prefix).toBe("feature/");
     // Default values preserved
-    expect(config.worktree.path).toBe(".devpilot/worktrees");
+    expect(config.worktree.path).toBe(".aidflow/worktrees");
     expect(config.session.date_format).toBe("YYMMDD");
   });
 
   it("uses full custom config", () => {
-    mkdirSync(join(testRoot, ".devpilot"));
+    mkdirSync(join(testRoot, ".aidflow"));
     writeFileSync(
-      join(testRoot, ".devpilot", "config.yaml"),
+      join(testRoot, ".aidflow", "config.yaml"),
       `version: 2
 worktree:
   auto: true
@@ -97,8 +97,8 @@ guides:
   });
 
   it("returns default config for invalid yaml", () => {
-    mkdirSync(join(testRoot, ".devpilot"));
-    writeFileSync(join(testRoot, ".devpilot", "config.yaml"), "{{invalid yaml}}");
+    mkdirSync(join(testRoot, ".aidflow"));
+    writeFileSync(join(testRoot, ".aidflow", "config.yaml"), "{{invalid yaml}}");
     setWorkspaceRoot(testRoot);
     // Should not throw, falls back to default
     const config = getConfig();
@@ -112,10 +112,10 @@ describe("resolve", () => {
     expect(resolve("src", "index.ts")).toBe(join(testRoot, "src", "index.ts"));
   });
 
-  it("resolves .devpilot paths", () => {
+  it("resolves .aidflow paths", () => {
     setWorkspaceRoot(testRoot);
-    expect(resolve(".devpilot", "config.yaml")).toBe(
-      join(testRoot, ".devpilot", "config.yaml"),
+    expect(resolve(".aidflow", "config.yaml")).toBe(
+      join(testRoot, ".aidflow", "config.yaml"),
     );
   });
 });

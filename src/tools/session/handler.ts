@@ -15,7 +15,7 @@ import type { SessionInput } from "./schema.js";
 
 export async function handleSession(input: SessionInput): Promise<string> {
   if (!isInitialized()) {
-    return "devpilot is not initialized. Run `init` first.";
+    return "aidflow is not initialized. Run `init` first.";
   }
 
   switch (input.action) {
@@ -58,7 +58,7 @@ function handleCreate(input: SessionInput): string {
 
   const lines = [
     `Session "${meta.name}" created.`,
-    `Path: .devpilot/sessions/${meta.name}/`,
+    `Path: .aidflow/sessions/${meta.name}/`,
   ];
 
   if (worktreeWarning) {
@@ -148,7 +148,7 @@ function handleStatus(input: SessionInput): string {
 
   if (plan.exists) {
     lines.push(`\nPlan: ${plan.completed}/${plan.total} items completed`);
-    lines.push(`Plan file: .devpilot/sessions/${name}/plan.md (read for full context)`);
+    lines.push(`Plan file: .aidflow/sessions/${name}/plan.md (read for full context)`);
     const remaining = plan.items.filter((item) => !item.completed);
     if (remaining.length > 0) {
       lines.push("Remaining:");

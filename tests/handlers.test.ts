@@ -9,14 +9,14 @@ import { handlePlan } from "../src/tools/plan/handler.js";
 let testRoot: string;
 
 function setupWorkspace() {
-  testRoot = join(tmpdir(), `devpilot-handler-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-  mkdirSync(join(testRoot, ".devpilot", "sessions"), { recursive: true });
-  mkdirSync(join(testRoot, ".devpilot", "history"), { recursive: true });
+  testRoot = join(tmpdir(), `aidflow-handler-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  mkdirSync(join(testRoot, ".aidflow", "sessions"), { recursive: true });
+  mkdirSync(join(testRoot, ".aidflow", "history"), { recursive: true });
   writeFileSync(
-    join(testRoot, ".devpilot", "config.yaml"),
+    join(testRoot, ".aidflow", "config.yaml"),
     `version: 1
 session:
-  history_path: ".devpilot/history"
+  history_path: ".aidflow/history"
   date_format: "YYMMDD"`,
   );
   setWorkspaceRoot(testRoot);
@@ -34,7 +34,7 @@ describe("session handler - create", () => {
   it("creates session successfully", async () => {
     const result = await handleSession({ action: "create", name: "test", force: false });
     expect(result).toContain('Session "test" created.');
-    expect(result).toContain("Path: .devpilot/sessions/test/");
+    expect(result).toContain("Path: .aidflow/sessions/test/");
   });
 
   it("rejects duplicate session name", async () => {
@@ -106,7 +106,7 @@ describe("session handler - status", () => {
   it("shows plan progress when plan exists", async () => {
     await handleSession({ action: "create", name: "planned", force: false });
     writeFileSync(
-      join(testRoot, ".devpilot", "sessions", "planned", "plan.md"),
+      join(testRoot, ".aidflow", "sessions", "planned", "plan.md"),
       "- [x] Done\n- [ ] Pending",
     );
     const result = await handleSession({ action: "status", name: "planned", force: false });
@@ -123,7 +123,7 @@ describe("session handler - status", () => {
   it("shows next suggested item from remaining unchecked items", async () => {
     await handleSession({ action: "create", name: "next-item", force: false });
     writeFileSync(
-      join(testRoot, ".devpilot", "sessions", "next-item", "plan.md"),
+      join(testRoot, ".aidflow", "sessions", "next-item", "plan.md"),
       "- [x] First\n- [ ] Second\n- [ ] Third",
     );
     const result = await handleSession({ action: "status", name: "next-item", force: false });
@@ -133,7 +133,7 @@ describe("session handler - status", () => {
   it("suggests complete when all items done", async () => {
     await handleSession({ action: "create", name: "all-done", force: false });
     writeFileSync(
-      join(testRoot, ".devpilot", "sessions", "all-done", "plan.md"),
+      join(testRoot, ".aidflow", "sessions", "all-done", "plan.md"),
       "- [x] Item 1\n- [x] Item 2",
     );
     const result = await handleSession({ action: "status", name: "all-done", force: false });
@@ -155,26 +155,26 @@ describe("session handler - complete", () => {
     const result = await handleSession({ action: "complete", name: "done", force: false });
     expect(result).toContain('Session "done" archived.');
     // Session should be moved
-    expect(existsSync(join(testRoot, ".devpilot", "sessions", "done"))).toBe(false);
+    expect(existsSync(join(testRoot, ".aidflow", "sessions", "done"))).toBe(false);
   });
 
   it("blocks completion with incomplete plan (no force)", async () => {
     await handleSession({ action: "create", name: "incomplete", force: false });
     writeFileSync(
-      join(testRoot, ".devpilot", "sessions", "incomplete", "plan.md"),
+      join(testRoot, ".aidflow", "sessions", "incomplete", "plan.md"),
       "- [x] Done\n- [ ] Not done",
     );
     const result = await handleSession({ action: "complete", name: "incomplete", force: false });
     expect(result).toContain("incomplete plan items");
     expect(result).toContain("force: true");
     // Session should still exist
-    expect(existsSync(join(testRoot, ".devpilot", "sessions", "incomplete"))).toBe(true);
+    expect(existsSync(join(testRoot, ".aidflow", "sessions", "incomplete"))).toBe(true);
   });
 
   it("allows force completion of incomplete session", async () => {
     await handleSession({ action: "create", name: "force-it", force: false });
     writeFileSync(
-      join(testRoot, ".devpilot", "sessions", "force-it", "plan.md"),
+      join(testRoot, ".aidflow", "sessions", "force-it", "plan.md"),
       "- [ ] Pending",
     );
     const result = await handleSession({ action: "complete", name: "force-it", force: true });
@@ -236,7 +236,7 @@ describe("plan handler", () => {
   it("returns plan content for get action", async () => {
     await handleSession({ action: "create", name: "get-plan", force: false });
     writeFileSync(
-      join(testRoot, ".devpilot", "sessions", "get-plan", "plan.md"),
+      join(testRoot, ".aidflow", "sessions", "get-plan", "plan.md"),
       "# My Plan\n- [x] Done\n- [ ] Pending",
     );
     const result = await handlePlan({ action: "get", session: "get-plan" });
@@ -253,7 +253,7 @@ describe("plan handler", () => {
   it("warns when plan already exists for create", async () => {
     await handleSession({ action: "create", name: "has-plan", force: false });
     writeFileSync(
-      join(testRoot, ".devpilot", "sessions", "has-plan", "plan.md"),
+      join(testRoot, ".aidflow", "sessions", "has-plan", "plan.md"),
       "# Existing Plan",
     );
     const result = await handlePlan({ action: "create", session: "has-plan" });

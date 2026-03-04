@@ -36,7 +36,7 @@ function listGuides(): GuideInfo[] {
 
 export async function handleGuide(input: GuideInput): Promise<string> {
   if (!isInitialized()) {
-    return "devpilot is not initialized. Run `init` first.";
+    return "aidflow is not initialized. Run `init` first.";
   }
 
   switch (input.action) {
@@ -53,7 +53,7 @@ function handleList(): string {
   if (guides.length === 0) {
     return [
       "No guides found.",
-      "Add markdown files to .devpilot/guides/ to create project guides.",
+      "Add markdown files to .aidflow/guides/ to create project guides.",
     ].join("\n");
   }
 
