@@ -1,0 +1,20 @@
+# devpilot configuration
+version: 1
+
+worktree:
+  # Auto-create worktree for every new session
+  auto: false
+  # Worktree storage path
+  path: ".devpilot/worktrees"
+  # Branch name prefix for worktrees (e.g., "feature/", "fix/", or empty)
+  branch_prefix: ""
+
+session:
+  # Archived session storage path
+  history_path: ".devpilot/history"
+  # Date format for archive names (YYMMDD or YYYYMMDD)
+  date_format: "YYMMDD"
+
+guides:
+  # Guide documents path
+  path: ".devpilot/guides"
