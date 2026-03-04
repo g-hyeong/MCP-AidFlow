@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { setWorkspaceRoot } from "../src/context/workspace.js";
 import { selectGlobal, bindService, clearAll } from "../src/context/service.js";
-import { handleGuide } from "../src/tools/guide/handler.js";
+import { handleGuide, getRequiredGuides, formatRequiredGuides } from "../src/tools/guide/handler.js";
 
 let testRoot: string;
 
@@ -146,5 +146,97 @@ describe("guide - session binding (parallel work)", () => {
     const result = await handleGuide({ action: "read", topic: "components", session: "s1" });
     expect(result).toContain("Guide: components");
     expect(result).toContain("Button");
+  });
+});
+
+describe("required guides (_toolName convention)", () => {
+  it("finds _plan.md as required guide for plan tool", () => {
+    const guidesDir = join(testRoot, ".aidflow", "guides");
+    mkdirSync(guidesDir, { recursive: true });
+    writeFileSync(join(guidesDir, "_plan.md"), "Always use TDD approach");
+
+    const guides = getRequiredGuides("plan");
+    expect(guides).toHaveLength(1);
+    expect(guides[0].name).toBe("_plan");
+    expect(guides[0].content).toBe("Always use TDD approach");
+  });
+
+  it("finds _plan_*.md pattern files", () => {
+    const guidesDir = join(testRoot, ".aidflow", "guides");
+    mkdirSync(guidesDir, { recursive: true });
+    writeFileSync(join(guidesDir, "_plan.md"), "Base plan guide");
+    writeFileSync(join(guidesDir, "_plan_api.md"), "API-specific planning rules");
+    writeFileSync(join(guidesDir, "_plan_graphql.md"), "GraphQL planning rules");
+
+    const guides = getRequiredGuides("plan");
+    expect(guides).toHaveLength(3);
+    expect(guides.map((g) => g.name)).toEqual(["_plan", "_plan_api", "_plan_graphql"]);
+  });
+
+  it("does not match different tool prefix", () => {
+    const guidesDir = join(testRoot, ".aidflow", "guides");
+    mkdirSync(guidesDir, { recursive: true });
+    writeFileSync(join(guidesDir, "_plan.md"), "Plan guide");
+    writeFileSync(join(guidesDir, "_session.md"), "Session guide");
+
+    const planGuides = getRequiredGuides("plan");
+    expect(planGuides).toHaveLength(1);
+    expect(planGuides[0].name).toBe("_plan");
+  });
+
+  it("returns empty when no required guides exist", () => {
+    const guidesDir = join(testRoot, ".aidflow", "guides");
+    mkdirSync(guidesDir, { recursive: true });
+    writeFileSync(join(guidesDir, "regular-guide.md"), "Just a regular guide");
+
+    const guides = getRequiredGuides("plan");
+    expect(guides).toHaveLength(0);
+  });
+
+  it("excludes _ prefixed files from guide list", async () => {
+    const guidesDir = join(testRoot, ".aidflow", "guides");
+    mkdirSync(guidesDir, { recursive: true });
+    writeFileSync(join(guidesDir, "regular.md"), "# Regular\nVisible guide");
+    writeFileSync(join(guidesDir, "_plan.md"), "Hidden required guide");
+    writeFileSync(join(guidesDir, "_session_init.md"), "Also hidden");
+
+    const result = await handleGuide({ action: "list" });
+    expect(result).toContain("regular");
+    expect(result).not.toContain("_plan");
+    expect(result).not.toContain("_session_init");
+  });
+
+  it("works with service-selected guides dir", () => {
+    const svcAidflow = join(testRoot, "api", ".aidflow");
+    mkdirSync(join(svcAidflow, "guides"), { recursive: true });
+    writeFileSync(join(svcAidflow, "guides", "_plan.md"), "Service-specific plan guide");
+    selectGlobal({ serviceName: "api", aidflowPath: svcAidflow });
+
+    const guides = getRequiredGuides("plan");
+    expect(guides).toHaveLength(1);
+    expect(guides[0].content).toBe("Service-specific plan guide");
+  });
+});
+
+describe("formatRequiredGuides", () => {
+  it("returns empty string for no guides", () => {
+    expect(formatRequiredGuides([])).toBe("");
+  });
+
+  it("formats single guide", () => {
+    const result = formatRequiredGuides([{ name: "_plan", content: "Use TDD" }]);
+    expect(result).toContain("## Required Guides (auto-loaded)");
+    expect(result).toContain("### _plan");
+    expect(result).toContain("Use TDD");
+  });
+
+  it("formats multiple guides with separator", () => {
+    const result = formatRequiredGuides([
+      { name: "_plan", content: "Base rules" },
+      { name: "_plan_api", content: "API rules" },
+    ]);
+    expect(result).toContain("### _plan");
+    expect(result).toContain("### _plan_api");
+    expect(result).toContain("---");
   });
 });

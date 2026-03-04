@@ -11,6 +11,7 @@ import {
   sessionExists,
 } from "../../context/session.js";
 import { createWorktree, getChangedFiles, getGitDiffStat } from "../../worktree/manager.js";
+import { getRequiredGuides, formatRequiredGuides } from "../guide/handler.js";
 import type { SessionInput } from "./schema.js";
 
 export async function handleSession(input: SessionInput): Promise<string> {
@@ -82,6 +83,13 @@ function handleCreate(input: SessionInput): string {
     "Use `plan create` if you need upfront planning.",
     "Run `session complete` when done.",
   );
+
+  // 필독 가이드 자동 로드 (_session.md, _session_*.md)
+  const requiredGuides = getRequiredGuides("session");
+  const requiredSection = formatRequiredGuides(requiredGuides);
+  if (requiredSection) {
+    lines.push("", "---", "", requiredSection);
+  }
 
   return lines.join("\n");
 }

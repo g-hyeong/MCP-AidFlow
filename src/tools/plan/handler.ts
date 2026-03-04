@@ -6,6 +6,7 @@ import {
   getPlanContent,
   sessionExists,
 } from "../../context/session.js";
+import { getRequiredGuides, formatRequiredGuides } from "../guide/handler.js";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import type { PlanInput } from "./schema.js";
@@ -163,6 +164,13 @@ function handleCreate(sessionName: string): string {
     "Use AskUserQuestion: confirm, request changes, or approve.",
     "Do NOT proceed to implementation until the user approves the plan.",
   );
+
+  // 필독 가이드 자동 로드 (_plan.md, _plan_*.md)
+  const requiredGuides = getRequiredGuides("plan");
+  const requiredSection = formatRequiredGuides(requiredGuides);
+  if (requiredSection) {
+    lines.push("", "---", "", requiredSection);
+  }
 
   return lines.join("\n");
 }

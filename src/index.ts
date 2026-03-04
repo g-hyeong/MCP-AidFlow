@@ -46,11 +46,15 @@ Single-service projects are auto-selected.
 3. Work using Claude Code's native tools. Follow plan.md as the execution spec.
 4. When work is done, run \`/finish\` to complete the session (review, archive, report, commit in one step).
 
+## Guides
+- **Required guides** (\`_toolName.md\`, \`_toolName_*.md\`): Auto-loaded when the corresponding tool is called. Not shown in \`guide list\`.
+- **Regular guides**: Listed by \`guide list\`. When you encounter a task or topic that likely has a relevant guide, proactively call \`guide read\` to load it. Do not wait for the user to ask -- if a guide name matches the current context (e.g., a "testing" guide when writing tests, an "api" guide when working on endpoints), read it immediately.
+- When no matching guide is obvious, run \`guide list\` and suggest relevant ones to the user.
+
 ## Rules
 - **All development work MUST go through aidflow**. Always use \`session create\` before coding.
 - Always confirm with the user before proceeding (use AskUserQuestion).
 - **When a plan item is completed, immediately update plan.md**: change \`- [ ]\` to \`- [x]\` for the corresponding item. This keeps plan progress accurate.
-- Use \`guide list\` to find relevant guides, then let the user choose.
 - For parallel work, create multiple sessions with worktrees and use Subagents.
 
 ## User Expertise Support
@@ -64,7 +68,7 @@ Single-service projects are auto-selected.
 - Use the best tool for each job: aidflow for structure, native tools for implementation, external tools for everything else.`;
 
 const server = new McpServer(
-  { name: "aidflow", version: "1.2.1" },
+  { name: "aidflow", version: "1.2.2" },
   {
     capabilities: {
       tools: {},
