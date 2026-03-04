@@ -7,6 +7,7 @@ import { InitInputSchema, handleInit, description as initDesc } from "./tools/in
 import { SessionInputSchema, handleSession, description as sessionDesc } from "./tools/session/index.js";
 import { PlanInputSchema, handlePlan, description as planDesc } from "./tools/plan/index.js";
 import { GuideInputSchema, handleGuide, description as guideDesc } from "./tools/guide/index.js";
+import { SelectServiceInputSchema, handleSelectService, description as selectServiceDesc } from "./tools/select_service/index.js";
 
 const INSTRUCTIONS = `# aidflow
 
@@ -26,6 +27,14 @@ Before doing ANYTHING, check for existing context:
    - Proceed with normal workflow below.
 
 This ensures seamless context recovery across conversation sessions.
+
+## Multi-Service Workspace
+If the workspace contains multiple services (each with their own .aidflow/):
+1. Run \`select_service(action: "list")\` to discover services.
+2. Confirm the target service with the user.
+3. Run \`select_service(action: "select", service: "name")\` to select.
+4. For parallel sessions, bind service to session: \`select_service(action: "select", service: "name", session: "session-name")\`.
+Single-service projects are auto-selected.
 
 ## First-time Setup
 1. \`init\` to create .aidflow/ directory and configuration.
@@ -55,7 +64,7 @@ This ensures seamless context recovery across conversation sessions.
 - Use the best tool for each job: aidflow for structure, native tools for implementation, external tools for everything else.`;
 
 const server = new McpServer(
-  { name: "aidflow", version: "1.0.0" },
+  { name: "aidflow", version: "1.2.1" },
   {
     capabilities: {
       tools: {},
@@ -98,6 +107,15 @@ server.registerTool("guide", {
 }, async (params) => {
   const input = GuideInputSchema.parse(params);
   const result = await handleGuide(input);
+  return { content: [{ type: "text", text: result }] };
+});
+
+server.registerTool("select_service", {
+  description: selectServiceDesc,
+  inputSchema: SelectServiceInputSchema,
+}, async (params) => {
+  const input = SelectServiceInputSchema.parse(params);
+  const result = await handleSelectService(input);
   return { content: [{ type: "text", text: result }] };
 });
 

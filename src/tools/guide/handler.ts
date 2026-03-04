@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { isInitialized, getConfig, resolve } from "../../context/workspace.js";
+import { getService } from "../../context/service.js";
 import type { GuideInput } from "./schema.js";
 
 interface GuideInfo {
@@ -9,13 +10,18 @@ interface GuideInfo {
   description: string;
 }
 
-function getGuidesDir(): string {
+function getGuidesDir(sessionName?: string): string {
+  // 서비스가 선택된 경우 해당 서비스의 guides/ 사용
+  const service = getService(sessionName);
+  if (service) {
+    return join(service.aidflowPath, "guides");
+  }
   const config = getConfig();
   return resolve(config.guides.path);
 }
 
-function listGuides(): GuideInfo[] {
-  const dir = getGuidesDir();
+function listGuides(sessionName?: string): GuideInfo[] {
+  const dir = getGuidesDir(sessionName);
   if (!existsSync(dir)) return [];
 
   return readdirSync(dir)
@@ -41,14 +47,14 @@ export async function handleGuide(input: GuideInput): Promise<string> {
 
   switch (input.action) {
     case "list":
-      return handleList();
+      return handleList(input.session);
     case "read":
-      return handleRead(input.topic);
+      return handleRead(input.topic, input.session);
   }
 }
 
-function handleList(): string {
-  const guides = listGuides();
+function handleList(sessionName?: string): string {
+  const guides = listGuides(sessionName);
 
   if (guides.length === 0) {
     return [
@@ -70,12 +76,12 @@ function handleList(): string {
   return lines.join("\n");
 }
 
-function handleRead(topic?: string): string {
+function handleRead(topic?: string, sessionName?: string): string {
   if (!topic) {
     return "Specify a guide topic to read. Use `guide list` to see available guides.";
   }
 
-  const guidePath = join(getGuidesDir(), `${topic}.md`);
+  const guidePath = join(getGuidesDir(sessionName), `${topic}.md`);
   if (!existsSync(guidePath)) {
     return `Guide "${topic}" not found. Use \`guide list\` to see available guides.`;
   }

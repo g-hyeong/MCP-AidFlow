@@ -9,6 +9,10 @@ export const GuideInputSchema = z.object({
     .string()
     .optional()
     .describe("Guide name to read (without .md extension)"),
+  session: z
+    .string()
+    .optional()
+    .describe("Session name to resolve service binding. Auto-detects if only one active session exists"),
 });
 
 export type GuideInput = z.infer<typeof GuideInputSchema>;
