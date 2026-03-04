@@ -2,6 +2,7 @@
 name: spec
 description: Define or update project SPEC.md - engineering foundations and conventions.
 allowed-tools: Read, Write, Edit, AskUserQuestion, Glob, Grep, WebSearch
+user-invokable: true
 ---
 
 Manage the project SPEC.md file - the single source of truth for project-level engineering decisions.

@@ -2,6 +2,8 @@
 name: report
 description: Generate a session completion report. Call after session complete.
 allowed-tools: Read, Write, Bash, Glob, Grep
+user-invokable: true
+argument-hint: "[session-name]"
 ---
 
 Generate a completion report for the most recently archived session.

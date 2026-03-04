@@ -2,6 +2,7 @@
 name: review
 description: Review session work before completing. Run before session complete.
 allowed-tools: Read, Glob, Grep, Bash, WebSearch
+user-invokable: true
 ---
 
 Perform a thorough review of the current session's work before archiving.

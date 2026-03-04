@@ -88,10 +88,10 @@ export async function handleInit(input: InitInput): Promise<string> {
     created.push(...guideFiles.map((f) => f.replace(root + "/", "")));
   }
 
-  // 5. Copy skills to .claude/commands/
+  // 5. Copy skills to .claude/skills/
   const skillsSrc = join(tplDir, "skills");
   if (existsSync(skillsSrc)) {
-    const skillsDest = resolve(".claude", "commands");
+    const skillsDest = resolve(".claude", "skills");
     mkdirSync(skillsDest, { recursive: true });
     const skillFiles = copyTemplateDir(skillsSrc, skillsDest);
     created.push(...skillFiles.map((f) => f.replace(root + "/", "")));
