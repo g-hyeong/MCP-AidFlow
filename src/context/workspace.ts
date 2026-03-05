@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml } from "./yaml.js";
+import { getService } from "./service.js";
 
 export interface AidflowConfig {
   version: number;
@@ -51,8 +52,7 @@ export function getWorkspaceRoot(): string {
 
 export function isInitialized(): boolean {
   try {
-    const root = getWorkspaceRoot();
-    return existsSync(join(root, ".aidflow"));
+    return existsSync(getAidflowRoot());
   } catch {
     return false;
   }
@@ -85,6 +85,18 @@ export function getConfig(): AidflowConfig {
 
 export function resolve(...segments: string[]): string {
   return join(getWorkspaceRoot(), ...segments);
+}
+
+/**
+ * 서비스가 선택된 경우 해당 서비스의 .aidflow/ 경로 반환
+ * 미선택 시 워크스페이스 루트의 .aidflow/ 반환
+ */
+export function getAidflowRoot(sessionName?: string): string {
+  const service = getService(sessionName);
+  if (service) {
+    return service.aidflowPath;
+  }
+  return join(getWorkspaceRoot(), ".aidflow");
 }
 
 function deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {

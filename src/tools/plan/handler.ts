@@ -1,4 +1,4 @@
-import { isInitialized, resolve, getWorkspaceRoot } from "../../context/workspace.js";
+import { isInitialized, getAidflowRoot, getWorkspaceRoot } from "../../context/workspace.js";
 import {
   findActiveSession,
   getMeta,
@@ -38,7 +38,7 @@ function resolveSession(name?: string): string | null {
 }
 
 function handleCreate(sessionName: string): string {
-  const planPath = resolve(".aidflow", "sessions", sessionName, "plan.md");
+  const planPath = join(getAidflowRoot(), "sessions", sessionName, "plan.md");
 
   if (existsSync(planPath)) {
     return [

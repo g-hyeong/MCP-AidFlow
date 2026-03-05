@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, renameSync } from "node:fs";
-import { join, basename } from "node:path";
-import { getConfig, resolve } from "./workspace.js";
+import { join } from "node:path";
+import { getConfig, getAidflowRoot } from "./workspace.js";
 
 export interface SessionMeta {
   name: string;
@@ -28,7 +28,7 @@ export interface PlanProgress {
 }
 
 function sessionsDir(): string {
-  return resolve(".aidflow", "sessions");
+  return join(getAidflowRoot(), "sessions");
 }
 
 function sessionDir(name: string): string {
@@ -114,7 +114,7 @@ export function archiveSession(name: string, changedFiles?: string[]): string {
   const now = new Date();
   const dateStr = formatDate(now, config.session.date_format);
   const archiveName = `${dateStr}_${name}`;
-  const historyDir = resolve(config.session.history_path);
+  const historyDir = join(getAidflowRoot(), "history");
   const destDir = join(historyDir, archiveName);
 
   mkdirSync(historyDir, { recursive: true });

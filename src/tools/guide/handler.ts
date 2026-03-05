@@ -1,7 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { isInitialized, getConfig, resolve } from "../../context/workspace.js";
-import { getService } from "../../context/service.js";
+import { isInitialized, getAidflowRoot } from "../../context/workspace.js";
 import type { GuideInput } from "./schema.js";
 
 interface GuideInfo {
@@ -11,13 +10,7 @@ interface GuideInfo {
 }
 
 function getGuidesDir(sessionName?: string): string {
-  // 서비스가 선택된 경우 해당 서비스의 guides/ 사용
-  const service = getService(sessionName);
-  if (service) {
-    return join(service.aidflowPath, "guides");
-  }
-  const config = getConfig();
-  return resolve(config.guides.path);
+  return join(getAidflowRoot(sessionName), "guides");
 }
 
 function listGuides(sessionName?: string): GuideInfo[] {
